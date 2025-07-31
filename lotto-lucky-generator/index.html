@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>다은이 다솜이들이 추천하는 행운 번호 생성기 ✨</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Kakao JavaScript SDK 스크립트. 비동기 로딩을 위해 defer 속성 사용. -->
+    <link rel="stylesheet" href="style.css" />
     <script src="https://developers.kakao.com/sdk/js/kakao.js" defer></script>
 </head>
 <body>
@@ -53,23 +52,27 @@
             </div>
         </section>
 
-        <hr>
+        <hr />
 
         <section class="send-section">
             <h2>💌 행운 번호 친구에게 보내기</h2>
             <p>생성된 번호를 소중한 사람에게 전송해봐!</p>
             <div class="input-group">
-                <input type="tel" id="phoneNumber" placeholder="받을 사람의 휴대폰 번호 (예: 01012345678)" maxlength="11"
-                    pattern="[0-9]{10,11}" title="숫자만 입력해주세요 (하이픈(-) 없이 10~11자리)">
+                <input
+                    type="tel"
+                    id="phoneNumber"
+                    placeholder="받을 사람의 휴대폰 번호 (예: 01012345678)"
+                    maxlength="11"
+                    pattern="[0-9]{10,11}"
+                    title="숫자만 입력해주세요 (하이픈(-) 없이 10~11자리)"
+                />
                 <button id="sendSmsBtn">SMS로 전송</button>
             </div>
             <button id="sendKakaoBtn" class="kakao-button">카카오톡으로 전송</button>
             <p class="status-message" id="statusMessage"></p>
         </section>
-
     </div>
 
-    <!-- script.js 스크립트. defer 속성 사용. -->
     <script src="script.js" defer></script>
 </body>
 </html>

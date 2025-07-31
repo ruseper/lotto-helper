@@ -19,7 +19,12 @@ const statusMessageDisplay = document.getElementById('statusMessage');
 //    여기에 카카오 개발자 사이트에서 받은 너의 'JavaScript 키'를 넣어줘!
 // ----------------------------------------------------
 // ✨✨ 네 카카오 JavaScript 키가 적용된 상태입니다! ✨✨
-Kakao.init('2765155fedb41c320bd545d028532658'); 
+// Kakao.init('2765155fedb41c320bd545d028532658'); 
+// Kakao JavaScript 키 적용 및 API_BASE_URL 설정
+Kakao.init('2765155fedb41c320bd545d028532658');
+const API_BASE_URL = 'https://lotto-helper.onrender.com/api';
+
+// (생략) 이전에 제공한 script.js 전체 코드 복사해서 사용하세요
 
 if (Kakao.isInitialized()) {
     console.log('카카오 SDK 초기화 성공!');
