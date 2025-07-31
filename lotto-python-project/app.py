@@ -13,7 +13,7 @@ app = Flask(__name__)
 # ✨✨ CORS 설정: 모든 출처(*)에서 오는 요청 허용 (임시, 배포 시 보안 취약) ✨✨
 # 이 설정으로 CORS 에러가 해결되는지 먼저 확인하세요.
 # 이후에는 'origins'를 "https://ruseper.github.io" 등으로 정확히 명시하는 것이 보안에 좋습니다.
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/api/*": {"origins": "https://ruseper.github.io"}})
 
 
 # --- 데이터 크롤링 및 로드 함수들 ---
