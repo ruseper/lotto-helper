@@ -11,6 +11,10 @@ const phoneNumberInput = document.getElementById('phoneNumber');
 const sendSmsBtn = document.getElementById('sendSmsBtn');
 const sendKakaoBtn = document.getElementById('sendKakaoBtn');
 const statusMessageDisplay = document.getElementById('statusMessage');
+const lottoNumbers1 = [5, 12, 23, 32, 38, 45];
+const lottoNumbers2 = [3, 7, 19, 28, 35, 41];
+const pensionNumbers1 = '3조 524813';
+const pensionNumbers2 = '4조 098712';
 
 // 2. Kakao SDK 초기화
 // ✨✨ 네 카카오 JavaScript 키가 적용된 상태입니다! ✨✨
@@ -271,63 +275,35 @@ sendSmsBtn.addEventListener('click', () => {
 });
 
 // 💬 카카오톡으로 전송 버튼 클릭
-sendKakaoBtn.addEventListener('click', () => {
-    const allLottoSets = Array.from(lottoNumbersContainer.querySelectorAll('.number-set-item')).map(setItem => {
-        const numbers = Array.from(setItem.querySelectorAll('span:not(.placeholder), div.set-title'));
-        return numbers.filter(n => !n.classList.contains('set-title')).map(span => span.textContent);
-    }).filter(set => set.length > 0);
-    const allPensionSets = Array.from(pensionNumbersContainer.querySelectorAll('.number-set-item')).map(setItem => {
-        const numbers = Array.from(setItem.querySelectorAll('span:not(.placeholder), div.set-title'));
-        return numbers.filter(n => !n.classList.contains('set-title')).map(span => span.textContent);
-    }).filter(set => set.length > 0);
-    
-    if (allLottoSets.length === 0 && allPensionSets.length === 0) {
-        showStatusMessage('생성된 번호가 없어요! 먼저 번호를 뽑아주세요! 🙏', true);
-        return;
-    }
-
-    let messageText = "💖 다은이와 다솜이가 추천하는 행운 번호! 💖\n";
-    if (allLottoSets.length > 0) {
-        messageText += `\n🍀 로또 번호 (${allLottoSets.length}세트):\n`;
-        allLottoSets.forEach((set, index) => {
-            messageText += `  ${index + 1}세트: ${set.join(', ')}\n`;
-        });
-    }
-    if (allPensionSets.length > 0) {
-        messageText += `\n💰 연금복권 번호 (${allPensionSets.length}세트):\n`;
-        allPensionSets.forEach((set, index) => {
-            messageText += `  ${index + 1}세트: ${set.join(', ')}\n`;
-        });
-    }
-    messageText += "\n오늘의 행운을 잡으세요! 😉";
-
-    if (Kakao.isInitialized()) {
-        Kakao.Link.sendDefault({
-            objectType: 'feed',
-            content: {
-                title: '행운 번호 추천',
-                description: messageText,
-                imageUrl: 'https://yourdomain.com/path/to/image.png',  // 적당한 이미지 URL
-                link: {
-                    mobileWebUrl: window.location.href,
-                    webUrl: window.location.href
-                }
-            },
-            buttons: [
-                {
-                    title: '웹사이트 방문하기',
-                    link: {
-                        mobileWebUrl: window.location.href,
-                        webUrl: window.location.href
-                    }
-                }
-            ]
-        });
-        showStatusMessage('카카오톡 공유 창이 열렸어요! 친구에게 행운을 나눠주세요! 📱');
-    } else {
-        showStatusMessage('카카오 SDK 초기화가 안 되어있어요. JavaScript 키를 확인해주세요! 😭', true);
-    }
+Kakao.Share.sendDefault({
+  objectType: 'feed',
+  content: {
+    title: '💖 다은이와 다솜이가 추천하는 행운 번호 💖',
+    description: 
+      '🍀 로또 번호:\n' +
+      '1세트: ' + lottoNumbers1.join(', ') + '\n' +
+      '2세트: ' + lottoNumbers2.join(', ') + '\n\n' +
+      '💰 연금복권 번호:\n' +
+      '1세트: ' + pensionNumbers1 + '\n' +
+      '2세트: ' + pensionNumbers2 + '\n\n' +
+      '🔗 전체 번호는 웹에서 확인해보세요!',
+    imageUrl: 'https://ruseper.github.io/lotto-helper/lotto.png', // 없어도 OK
+    link: {
+      mobileWebUrl: 'https://ruseper.github.io/lotto-helper/',
+      webUrl: 'https://ruseper.github.io/lotto-helper/',
+    },
+  },
+  buttons: [
+    {
+      title: '웹사이트 방문하기',
+      link: {
+        mobileWebUrl: 'https://ruseper.github.io/lotto-helper/',
+        webUrl: 'https://ruseper.github.io/lotto-helper/',
+      },
+    },
+  ],
 });
+
 
 // 초기 상태 메시지 표시
 showStatusMessage('안녕하세요! 행운 번호를 뽑아보세요! 😊');
