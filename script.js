@@ -1,101 +1,106 @@
-// script.js - lotto-helper 루트 폴더용 최종 완성본
+// script.js 파일 - 프론트엔드와 백엔드 연결, 여러 세트 생성, 카톡 및 플레이스홀더 최종 버전
 
-// 1. DOM 요소 가져오기
+// ----------------------------------------------------
+// 1. DOM 요소 가져오기 (HTML 요소들을 JavaScript에서 사용하기 위해)
+// ----------------------------------------------------
 const lottoNumbersContainer = document.getElementById('lottoNumbersContainer');
 const pensionNumbersContainer = document.getElementById('pensionNumbersContainer');
 const generateLottoBtn = document.getElementById('generateLottoBtn');
 const generatePensionBtn = document.getElementById('generatePensionBtn');
-const lottoNumSetsSelect = document.getElementById('lottoNumSets');
-const pensionNumSetsSelect = document.getElementById('pensionNumSets');
+const lottoNumSetsSelect = document.getElementById('lottoNumSets'); // 로또 몇 세트? 드롭다운
+const pensionNumSetsSelect = document.getElementById('pensionNumSets'); // 연금복권 몇 세트? 드롭다운
 const phoneNumberInput = document.getElementById('phoneNumber');
 const sendSmsBtn = document.getElementById('sendSmsBtn');
 const sendKakaoBtn = document.getElementById('sendKakaoBtn');
 const statusMessageDisplay = document.getElementById('statusMessage');
-const lottoNumbers1 = [5, 12, 23, 32, 38, 45];
-const lottoNumbers2 = [3, 7, 19, 28, 35, 41];
-const pensionNumbers1 = '3조 524813';
-const pensionNumbers2 = '4조 098712';
 
-// 2. Kakao SDK 초기화
-// ✨✨ 네 카카오 JavaScript 키가 적용된 상태입니다! ✨✨
-Kakao.init('8eaabe73acdda5adb1d4bdc62a26cd84');
+// ----------------------------------------------------
+// 2. Kakao SDK 초기화 (카카오톡 기능 사용을 위해 가장 먼저 실행되어야 해!)
+//    여기에 카카오 개발자 사이트에서 받은 너의 'JavaScript 키'를 넣어줘!
+// ----------------------------------------------------
+Kakao.init('2765155fedb41c320bd545d028532658'); 
+
 if (Kakao.isInitialized()) {
     console.log('카카오 SDK 초기화 성공!');
 } else {
     console.error('카카오 SDK 초기화 실패! JavaScript 키를 확인해주세요.');
 }
 
-// 3. API 기본 주소 (Render 배포 주소)
-// ✨✨ Render에 배포된 백엔드 서버 URL로 설정되었습니다! ✨✨
-if (typeof API_BASE_URL === 'undefined') {
-  var API_BASE_URL = 'https://lotto-helper.onrender.com/api';
-}
+// ----------------------------------------------------
+// 3. 백엔드 API 기본 주소 설정 (파이썬 Flask 서버 주소!)
+// ----------------------------------------------------
+const API_BASE_URL = 'http://localhost:5000/api'; 
+// 지금은 로컬에서 Flask 서버를 돌리므로 localhost:5000이지만,
+// 나중에 서버에 배포하면 실제 서버 IP나 도메인으로 바꿔줘야 해!
 
+// ----------------------------------------------------
+// 4. 번호 생성 및 백엔드 연동 함수
+// ----------------------------------------------------
 
-
-// 4. 백엔드 API 호출 함수들
+/**
+ * 백엔드에서 로또 번호를 요청합니다.
+ * @returns {Promise<Array<number>>} 로또 번호 배열을 포함하는 Promise
+ */
 async function fetchLottoNumbersFromBackend() {
     try {
-        const response = await fetch(`${API_BASE_URL}/generate-lotto`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`서버 응답 오류: ${response.status} ${response.statusText} - ${errorText}`);
-            if (errorText.startsWith('<!doctype html>')) {
-                throw new Error("서버에서 HTML 오류 페이지를 반환했습니다. 백엔드 로그를 확인하세요.");
-            }
-            throw new Error(`HTTP 오류: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
+        const response = await fetch(${API_BASE_URL}/generate-lotto); // 로또 API 호출!
+        const data = await response.json(); // JSON 데이터 파싱
+
         if (data.success) {
-            return data.numbers;
+            return data.numbers; // 성공 시 번호 반환
         } else {
             console.error('백엔드에서 로또 번호 가져오기 실패:', data.message);
-            showStatusMessage(`로또 번호 가져오기 실패: ${data.message} 😭`, true);
+            showStatusMessage(로또 번호 가져오기 실패: ${data.message} 😭, true);
             return [];
         }
     } catch (error) {
-        console.error('로또 번호 API 호출 중 오류 발생:', error.message);
-        showStatusMessage(`로또 번호 서버 호출 중 오류 발생: ${error.message} 🚨`, true);
+        console.error('로또 번호 API 호출 중 오류 발생:', error);
+        showStatusMessage('로또 번호 서버 호출 중 오류 발생. 서버가 실행 중인지 확인해주세요! 🚨', true);
         return [];
     }
 }
 
+/**
+ * 백엔드에서 연금복권 번호를 요청합니다.
+ * @returns {Promise<string>} 연금복권 번호 문자열을 포함하는 Promise
+ */
 async function fetchPensionNumbersFromBackend() {
     try {
-        const response = await fetch(`${API_BASE_URL}/generate-pension`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`서버 응답 오류: ${response.status} ${response.statusText} - ${errorText}`);
-            if (errorText.startsWith('<!doctype html>')) {
-                throw new Error("서버에서 HTML 오류 페이지를 반환했습니다. 백엔드 로그를 확인하세요.");
-            }
-            throw new Error(`HTTP 오류: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
+        const response = await fetch(${API_BASE_URL}/generate-pension); // 연금복권 API 호출!
+        const data = await response.json(); // JSON 데이터 파싱
+
         if (data.success) {
             return data.numbers[0]; // 연금복권은 배열로 오므로 첫 번째 요소 (문자열) 반환
         } else {
             console.error('백엔드에서 연금복권 번호 가져오기 실패:', data.message);
-            showStatusMessage(`연금복권 번호 가져오기 실패: ${data.message} 😭`, true);
+            showStatusMessage(연금복권 번호 가져오기 실패: ${data.message} 😭, true);
             return '';
         }
     } catch (error) {
-        console.error('연금복권 번호 API 호출 중 오류 발생:', error.message);
+        console.error('연금복권 번호 API 호출 중 오류 발생:', error);
         showStatusMessage('연금복권 번호 서버 호출 중 오류 발생. 서버가 실행 중인지 확인해주세요! 🚨', true);
         return '';
     }
 }
 
 
+// ----------------------------------------------------
 // 5. 번호 표시 및 관리 함수
+// ----------------------------------------------------
+
+/**
+ * 개별 번호 세트를 HTML 요소에 표시합니다.
+ * @param {HTMLElement} setElement 번호가 표시될 단일 세트 HTML 요소
+ * @param {Array<number|string>} numbers 표시할 번호 배열
+ * @param {number} setIndex 세트 번호 (예: 1번째 세트, 2번째 세트)
+ */
 function displaySingleSet(setElement, numbers, setIndex) {
     setElement.innerHTML = ''; // 기존 내용 초기화
 
     // 세트 번호 추가 (ex: 1번째 세트: )
     const setTitle = document.createElement('div');
     setTitle.className = 'set-title';
-    setTitle.textContent = `${setIndex}번째 세트: `;
+    setTitle.textContent = ${setIndex}번째 세트: ;
     setElement.appendChild(setTitle);
 
     if (numbers.length === 0) {
@@ -111,6 +116,11 @@ function displaySingleSet(setElement, numbers, setIndex) {
     });
 }
 
+/**
+ * 여러 개의 번호 세트들을 컨테이너에 표시합니다.
+ * @param {HTMLElement} containerElement 모든 세트가 담길 부모 HTML 요소
+ * @param {Array<Array<number|string>>} allSets 모든 번호 세트 배열 (예: [[로또1],[로또2]])
+ */
 function displayMultipleSets(containerElement, allSets, type) {
     containerElement.innerHTML = ''; // 컨테이너 초기화 (기존 플레이스홀더 및 모든 세트 삭제)
 
@@ -125,7 +135,7 @@ function displayMultipleSets(containerElement, allSets, type) {
             message = PENSION_PLACEHOLDER_MESSAGE;
         }
 
-        placeholderDiv.innerHTML = `<span class="placeholder">${message}</span>`;
+        placeholderDiv.innerHTML = <span class="placeholder">${message}</span>;
         containerElement.appendChild(placeholderDiv);
         return;
     }
@@ -138,7 +148,9 @@ function displayMultipleSets(containerElement, allSets, type) {
     });
 }
 
+// ----------------------------------------------------
 // 6. 상태 메시지 표시 함수
+// ----------------------------------------------------
 function showStatusMessage(message, isError = false) {
     statusMessageDisplay.textContent = message;
     if (isError) {
@@ -151,12 +163,16 @@ function showStatusMessage(message, isError = false) {
     }, 5000);
 }
 
+// ----------------------------------------------------
 // 7. 플레이스홀더 메시지 정의
+// ----------------------------------------------------
 const LOTTO_PLACEHOLDER_MESSAGE = '로또 번호 뽑기! 버튼을 클릭하세요';
 const PENSION_PLACEHOLDER_MESSAGE = '연금복권 번호 뽑기! 버튼을 클릭하세요';
 
 
+// ----------------------------------------------------
 // 8. 이벤트 리스너 (버튼 클릭 시 실행될 동작 정의)
+// ----------------------------------------------------
 
 // 🍀 로또 번호 생성 버튼 클릭
 generateLottoBtn.addEventListener('click', async () => { // async 키워드 추가
@@ -176,7 +192,7 @@ generateLottoBtn.addEventListener('click', async () => { // async 키워드 추�
     }
     displayMultipleSets(lottoNumbersContainer, allLottoSets, 'lotto');
     if (allLottoSets.length > 0) {
-        showStatusMessage(`로또 번호 ${allLottoSets.length}세트가 생성되었어요! 행운을 빌어요! 😄`);
+        showStatusMessage(로또 번호 ${allLottoSets.length}세트가 생성되었어요! 행운을 빌어요! 😄);
     } else {
         showStatusMessage('로또 번호 생성을 완료하지 못했습니다. 😥', true);
     }
@@ -199,7 +215,7 @@ generatePensionBtn.addEventListener('click', async () => { // async 키워드 �
     }
     displayMultipleSets(pensionNumbersContainer, allPensionSets, 'pension');
     if (allPensionSets.length > 0) {
-        showStatusMessage(`연금복권 번호 ${allPensionSets.length}세트가 생성되었어요! 부자되세요~! 💰`);
+        showStatusMessage(연금복권 번호 ${allPensionSets.length}세트가 생성되었어요! 부자되세요~! 💰);
     } else {
         showStatusMessage('연금복권 번호 생성을 완료하지 못했습니다. 😥', true);
     }
@@ -239,7 +255,7 @@ sendSmsBtn.addEventListener('click', () => {
         return;
     }
 
-    showStatusMessage(`${phoneNumber} (으)로 번호를 전송 중... (실제 발송은 백엔드 연동 후 가능)`);
+    showStatusMessage(${phoneNumber} (으)로 번호를 전송 중... (실제 발송은 백엔드 연동 후 가능));
 
     console.log("SMS 전송 시뮬레이션 데이터:");
     console.log("받는 사람:", phoneNumber);
@@ -264,7 +280,7 @@ sendSmsBtn.addEventListener('click', () => {
         if (data.success) {
             showStatusMessage('번호 전송 성공! 🎉', false);
         } else {
-            showStatusMessage(`번호 전송 실패: ${data.message} 😭`, true);
+            showStatusMessage(번호 전송 실패: ${data.message} 😭, true);
         }
     })
     .catch(error => {
@@ -275,35 +291,62 @@ sendSmsBtn.addEventListener('click', () => {
 });
 
 // 💬 카카오톡으로 전송 버튼 클릭
-Kakao.Share.sendDefault({
-  objectType: 'feed',
-  content: {
-    title: '💖 다은이와 다솜이가 추천하는 행운 번호 💖',
-    description: 
-      '🍀 로또 번호:\n' +
-      '1세트: ' + lottoNumbers1.join(', ') + '\n' +
-      '2세트: ' + lottoNumbers2.join(', ') + '\n\n' +
-      '💰 연금복권 번호:\n' +
-      '1세트: ' + pensionNumbers1 + '\n' +
-      '2세트: ' + pensionNumbers2 + '\n\n' +
-      '🔗 전체 번호는 웹에서 확인해보세요!',
-    imageUrl: 'https://ruseper.github.io/lotto-helper/lotto.png', // 없어도 OK
-    link: {
-      mobileWebUrl: 'https://ruseper.github.io/lotto-helper/',
-      webUrl: 'https://ruseper.github.io/lotto-helper/',
-    },
-  },
-  buttons: [
-    {
-      title: '웹사이트 방문하기',
-      link: {
-        mobileWebUrl: 'https://ruseper.github.io/lotto-helper/',
-        webUrl: 'https://ruseper.github.io/lotto-helper/',
-      },
-    },
-  ],
+sendKakaoBtn.addEventListener('click', () => {
+    // 현재 표시된 모든 로또 번호 세트 가져오기
+    const allLottoSets = Array.from(lottoNumbersContainer.querySelectorAll('.number-set-item')).map(setItem => {
+        const numbers = Array.from(setItem.querySelectorAll('span:not(.placeholder), div.set-title'));
+        return numbers.filter(n => !n.classList.contains('set-title')).map(span => span.textContent);
+    }).filter(set => set.length > 0);
+
+    // 현재 표시된 모든 연금복권 번호 세트 가져오기
+    const allPensionSets = Array.from(pensionNumbersContainer.querySelectorAll('.number-set-item')).map(setItem => {
+        const numbers = Array.from(setItem.querySelectorAll('span:not(.placeholder), div.set-title'));
+        return numbers.filter(n => !n.classList.contains('set-title')).map(span => span.textContent);
+    }).filter(set => set.length > 0);
+
+    // 생성된 번호가 없으면 전송 불가
+    if (allLottoSets.length === 0 && allPensionSets.length === 0) {
+        showStatusMessage('생성된 번호가 없어요! 먼저 번호를 뽑아주세요! 🙏', true);
+        return;
+    }
+
+    // 전송할 메시지 내용 구성
+    let messageText = "💖 다은이와 다솜이가 추천하는 행운 번호! 💖\n"; // 카톡 제목 변경 반영
+
+    if (allLottoSets.length > 0) {
+        messageText += \n🍀 로또 번호 (${allLottoSets.length}세트):\n;
+        allLottoSets.forEach((set, index) => {
+            messageText +=   ${index + 1}세트: ${set.join(', ')}\n;
+        });
+    }
+
+    if (allPensionSets.length > 0) {
+        messageText += \n💰 연금복권 번호 (${allPensionSets.length}세트):\n;
+        allPensionSets.forEach((set, index) => {
+            messageText +=   ${index + 1}세트: ${set.join(', ')}\n;
+        });
+    }
+    
+    messageText += "\n오늘의 행운을 잡으세요! 😉";
+
+    // Kakao.Share.sendDefault()를 사용해서 카카오톡 공유 팝업을 띄울 거야
+    if (Kakao.isInitialized()) {
+        Kakao.Share.sendDefault({
+            objectType: 'text',
+            text: messageText,
+            link: {
+                mobileWebUrl: window.location.href,
+                webUrl: window.location.href
+            }
+        });
+        showStatusMessage('카카오톡 공유 창이 열렸어요! 친구에게 행운을 나눠주세요! 📱');
+    } else {
+        showStatusMessage('카카오 SDK 초기화가 안 되어있어요. JavaScript 키를 확인해주세요! 😭', true);
+    }
 });
 
 
-// 초기 상태 메시지 표시
+// ----------------------------------------------------
+// 9. 초기 메시지 표시 (페이지 로드 시)
+// ----------------------------------------------------
 showStatusMessage('안녕하세요! 행운 번호를 뽑아보세요! 😊');
