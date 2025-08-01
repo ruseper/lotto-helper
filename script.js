@@ -14,7 +14,7 @@ const statusMessageDisplay = document.getElementById('statusMessage');
 
 // 2. Kakao SDK 초기화
 // ✨✨ 네 카카오 JavaScript 키가 적용된 상태입니다! ✨✨
-Kakao.init('2765155fedb41c320bd545d028532658');
+Kakao.init('8eaabe73acdda5adb1d4bdc62a26cd84');
 if (Kakao.isInitialized()) {
     console.log('카카오 SDK 초기화 성공!');
 } else {
