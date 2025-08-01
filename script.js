@@ -330,15 +330,16 @@ sendKakaoBtn.addEventListener('click', () => {
     messageText += "\n오늘의 행운을 잡으세요! 😉";
 
     // Kakao.Share.sendDefault()를 사용해서 카카오톡 공유 팝업을 띄울 거야
-    if (Kakao.isInitialized()) {
-        Kakao.Share.sendDefault({
-            objectType: 'text',
-            text: messageText,
-            link: {
-                mobileWebUrl: window.location.href,
-                webUrl: window.location.href
-            }
-        });
+    Kakao.Share.sendDefault({
+    objectType: 'text',
+    text: messageText + '\n\n👉 전체 번호 보기: https://ruseper.github.io/lotto-helper/',
+    link: {
+        mobileWebUrl: 'https://ruseper.github.io/lotto-helper/',
+        webUrl: 'https://ruseper.github.io/lotto-helper/'
+    },
+    buttonTitle: "웹사이트에서 더 보기"
+});
+
         showStatusMessage('카카오톡 공유 창이 열렸어요! 친구에게 행운을 나눠주세요! 📱');
     } else {
         showStatusMessage('카카오 SDK 초기화가 안 되어있어요. JavaScript 키를 확인해주세요! 😭', true);
