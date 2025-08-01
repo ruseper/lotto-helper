@@ -280,10 +280,12 @@ sendKakaoBtn.addEventListener('click', () => {
         const numbers = Array.from(setItem.querySelectorAll('span:not(.placeholder), div.set-title'));
         return numbers.filter(n => !n.classList.contains('set-title')).map(span => span.textContent);
     }).filter(set => set.length > 0);
+    
     if (allLottoSets.length === 0 && allPensionSets.length === 0) {
         showStatusMessage('생성된 번호가 없어요! 먼저 번호를 뽑아주세요! 🙏', true);
         return;
     }
+
     let messageText = "💖 다은이와 다솜이가 추천하는 행운 번호! 💖\n";
     if (allLottoSets.length > 0) {
         messageText += `\n🍀 로또 번호 (${allLottoSets.length}세트):\n`;
@@ -298,14 +300,28 @@ sendKakaoBtn.addEventListener('click', () => {
         });
     }
     messageText += "\n오늘의 행운을 잡으세요! 😉";
+
     if (Kakao.isInitialized()) {
-        Kakao.Share.sendDefault({
-            objectType: 'text',
-            text: messageText,
-            link: {
-                mobileWebUrl: window.location.href,
-                webUrl: window.location.href
-            }
+        Kakao.Link.sendDefault({
+            objectType: 'feed',
+            content: {
+                title: '행운 번호 추천',
+                description: messageText,
+                imageUrl: 'https://yourdomain.com/path/to/image.png',  // 적당한 이미지 URL
+                link: {
+                    mobileWebUrl: window.location.href,
+                    webUrl: window.location.href
+                }
+            },
+            buttons: [
+                {
+                    title: '웹사이트 방문하기',
+                    link: {
+                        mobileWebUrl: window.location.href,
+                        webUrl: window.location.href
+                    }
+                }
+            ]
         });
         showStatusMessage('카카오톡 공유 창이 열렸어요! 친구에게 행운을 나눠주세요! 📱');
     } else {
