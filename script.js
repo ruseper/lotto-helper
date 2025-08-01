@@ -23,7 +23,11 @@ if (Kakao.isInitialized()) {
 
 // 3. API 기본 주소 (Render 배포 주소)
 // ✨✨ Render에 배포된 백엔드 서버 URL로 설정되었습니다! ✨✨
-const API_BASE_URL = 'https://lotto-helper.onrender.com/api';
+if (typeof API_BASE_URL === 'undefined') {
+  var API_BASE_URL = 'https://lotto-helper.onrender.com/api';
+}
+
+
 
 // 4. 백엔드 API 호출 함수들
 async function fetchLottoNumbersFromBackend() {
