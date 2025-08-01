@@ -8,7 +8,8 @@ import random
 app = Flask(__name__)
 
 # 모든 /api/* 경로에 대해 프론트엔드 도메인만 허용 (배포 시 권장)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+# CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)  # 모든 출처에 대해 전역 허용 (개발 중일 때만 사용)
 
 # 개발/테스트 시 임시로 모든 출처 허용하려면 아래처럼 설정 가능
 # CORS(app, resources={r"/api/*": {"origins": "*"}}
