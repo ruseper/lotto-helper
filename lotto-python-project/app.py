@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import random
+import os
 
 app = Flask(__name__)
 
@@ -181,5 +182,6 @@ def api_generate_pension():
     recommended_numbers = generate_recommended_pension_numbers()
     return jsonify({"success": True, "numbers": [recommended_numbers], "message": "연금복권 번호를 생성했습니다."})
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # Render가 지정한 포트를 사용
+    app.run(host="0.0.0.0", port=port, debug=True)
