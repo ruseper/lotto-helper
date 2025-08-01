@@ -11,7 +11,7 @@ const sendKakaoBtn = document.getElementById('sendKakaoBtn');
 const statusMessageDisplay = document.getElementById('statusMessage');
 
 // 2. Kakao SDK 초기화
-Kakao.init('2765155fedb41c320bd545d028532658');
+Kakao.init('8eaabe73acdda5adb1d4bdc62a26cd84');
 if (Kakao.isInitialized()) {
     console.log('카카오 SDK 초기화 성공!');
 } else {
